@@ -1,0 +1,2 @@
+# jerseypedia
+Theme WordPress
