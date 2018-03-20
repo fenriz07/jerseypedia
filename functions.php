@@ -2,6 +2,9 @@
 
 define('JERSEY_DIR', trailingslashit(get_template_directory()));
 define('JERSEY_URI', trailingslashit(get_template_directory_uri()));
+define('JERSEY_DOMAIN_TEXT', 'jeseypedia-theme');
+
+require_once JERSEY_DIR . 'inc/jersey-core-class.php';
 
 if (! function_exists('jersey_setup')) {
     function jersey_setup()
@@ -17,8 +20,8 @@ if (! function_exists('jersey_setup')) {
         register_nav_menus(array(
            'primary' => esc_html__('Primary Menu', 'eduma'),
          ));
+
+        $runJersey = new JerseyCore();
     }
-    //TODO: CREAR CORE Y ANEXAR ->
-    require_once JERSEY_DIR . "inc/libs/theme-wrapper.php";
 } // jersey_setup
 add_action('after_setup_theme', 'jersey_setup');
