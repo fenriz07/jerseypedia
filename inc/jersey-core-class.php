@@ -13,8 +13,7 @@ class JerseyCore
         $this->initCss();
         $this->initJs();
         $this->suportTheme();
-
-
+        
         $jerseyGallery = new jerseyGallery();
         $jerseyGallery->hearPost();
     }

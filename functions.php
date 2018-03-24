@@ -2,7 +2,7 @@
 
 define('JERSEY_DIR', trailingslashit(get_template_directory()));
 define('JERSEY_URI', trailingslashit(get_template_directory_uri()));
-define('JERSEY_DOMAIN_TEXT', 'jeseypedia-theme');
+define('JERSEY_DOMAIN_TEXT', 'jerseypedia-theme');
 
 require_once JERSEY_DIR . 'inc/jersey-core-class.php';
 
