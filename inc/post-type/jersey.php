@@ -1,5 +1,7 @@
 <?php
 
+define('PREFIX_META_BOX_JP', 'jersey-post-');
+
 function jerseyCustomPost()
 {
     $labels = array(
@@ -48,8 +50,6 @@ add_action('init', 'jerseyCustomPost', 0);
 
 function jerseyPostMetaBox($meta_boxes)
 {
-    $prefix = 'jersey-post-';
-
     $meta_boxes[] = array(
         'id' => 'metabox-jersey-post',
         'title' => esc_html__('Meta Datos', JERSEY_DOMAIN_TEXT),
@@ -59,60 +59,59 @@ function jerseyPostMetaBox($meta_boxes)
         'autosave' => false,
         'fields' => array(
             array(
-                'id' => $prefix . 'kit',
-                'type' => 'text',
+                'id' => PREFIX_META_BOX_JP . 'kit',
+                'type' => 'select',
                 'name' => esc_html__('Kit', JERSEY_DOMAIN_TEXT),
+                'placeholder' => esc_html__('Kit', JERSEY_DOMAIN_TEXT),
+                'options' => array(
+                    1 => 'Home kit',
+                    2 => 'Away kit',
+                    3 => 'Third kit',
+                    4 => 'Other'
+                ),
             ),
             array(
-                'id' => $prefix . 'type_kit',
+                'id' => PREFIX_META_BOX_JP . 'type_kit',
                 'name' => esc_html__('Type Kit', JERSEY_DOMAIN_TEXT),
                 'type' => 'select',
                 'placeholder' => esc_html__('Select an Item', JERSEY_DOMAIN_TEXT),
                 'options' => array(
-                    1 => 'Opcion',
-                    'Opcion 2',
-                    'Opcion 3',
+                    1 => 'Home kit',
+                    2 => 'Away kit',
+                    3 => 'Third kit',
+                    4 => 'Other'
                 ),
             ),
             array(
-                'id' => $prefix . 'league',
+                'id' => PREFIX_META_BOX_JP . 'league',
                 'type' => 'text',
                 'name' => esc_html__('League', JERSEY_DOMAIN_TEXT),
             ),
             array(
-                'id' => $prefix . 'make',
+                'id' => PREFIX_META_BOX_JP . 'make',
                 'type' => 'text',
                 'name' => esc_html__('Make', JERSEY_DOMAIN_TEXT),
             ),
             array(
-                'id' => $prefix . 'sponsors',
+                'id' => PREFIX_META_BOX_JP . 'sponsors',
                 'type' => 'text',
                 'name' => esc_html__('Sponsors', JERSEY_DOMAIN_TEXT),
             ),
             array(
-                'id' => $prefix . 'colours',
+                'id' => PREFIX_META_BOX_JP . 'colours',
                 'type' => 'text',
                 'name' => esc_html__('Colours', JERSEY_DOMAIN_TEXT),
             ),
             array(
-                'id' => $prefix . 'fabric',
+                'id' => PREFIX_META_BOX_JP . 'fabric',
                 'type' => 'text',
                 'name' => esc_html__('Fabric', JERSEY_DOMAIN_TEXT),
             ),
             array(
-                'id' => $prefix . 'date',
-                'type' => 'date',
-                'name' => esc_html__('Date', JERSEY_DOMAIN_TEXT),
-            ),
-            array(
-                'id' => $prefix . 'views',
+                'id' => PREFIX_META_BOX_JP . 'views',
                 'type' => 'hidden',
                 'name' => esc_html__('Views', JERSEY_DOMAIN_TEXT),
-            ),
-            array(
-                'id' => $prefix . 'rating',
-                'type' => 'text',
-                'name' => esc_html__('rating', JERSEY_DOMAIN_TEXT),
+                'std'  => 0,
             ),
         ),
     );

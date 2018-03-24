@@ -7,11 +7,16 @@ class JerseyCore
 {
     public function __construct()
     {
+        $this->Model();
         $this->initLibs();
         $this->initPostType();
         $this->initCss();
         $this->initJs();
         $this->suportTheme();
+
+
+        $jerseyGallery = new jerseyGallery();
+        $jerseyGallery->hearPost();
     }
 
     private function initCss()
@@ -24,7 +29,12 @@ class JerseyCore
     private function initLibs()
     {
         require_once JERSEY_DIR . "inc/libs/theme-wrapper.php";
+    }
+
+    private function Model()
+    {
         require_once JERSEY_DIR . "inc/model/jersey.php";
+        require_once JERSEY_DIR . "inc/model/jersey-gallery.php";
     }
 
     private function initPostType()
