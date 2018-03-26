@@ -4,6 +4,8 @@ require_once(ABSPATH . 'wp-admin/includes/image.php');
 require_once(ABSPATH . 'wp-admin/includes/file.php');
 require_once(ABSPATH . 'wp-admin/includes/media.php');
 
+
+
 /**
  *
  */
@@ -24,7 +26,7 @@ class jerseyGallery
 
             delete_post_meta($jersey_id, $this->key);
 
-            add_post_meta($jersey_id, $this->key, $gallery_empty);
+            add_post_meta($jersey_id, $this->key, $gallery);
         }
 
         return unserialize($gallery);
@@ -35,6 +37,9 @@ class jerseyGallery
         return $this->getGallery($jersey_id);
     }
 
+    /*
+      Listen to the {post} from jerseysingle
+    */
     public function hearPost()
     {
         add_action('admin_post_jersey_gallery_form', array( $this, 'processingPost' ));
@@ -72,8 +77,6 @@ class jerseyGallery
 
     private function gallerySingleJersey($images_gallery, $jersey_id)
     {
-        $parse_url   = parse_url($_SERVER['HTTP_REFERER']);
-        $url         = $parse_url['host'] . $parse_url['path'] . '?m=%s';
         $files       = $images_gallery["my_image_upload"];
         $attach_ids  = [];
         $cod_message = '';
@@ -84,45 +87,33 @@ class jerseyGallery
                 if ($files['name'][$key]) {
                     $_FILES = $this->prepareImage($files, $key);
                     foreach ($_FILES as $file => $array) {
-                        // $newupload = my_handle_attachment($file,$post_id);
                         $attach_id = media_handle_upload($file, -1);
                         array_push($attach_ids, $attach_id);
                     }
                 }
             }
         } else {
-            $cod_message = 'si';
-            $urlSet = sprintf($url, $cod_message);
-            wp_redirect($urlSet);
-            exit();
+            JPFlashMessage::FlashMessage(__('Error has not uploaded images', JERSEY_DOMAIN_TEXT));
         }
 
         if (is_wp_error($attachment_id)) {
-            $cod_message = 'ee';
+            JPFlashMessage::FlashMessage(__('Error', JERSEY_DOMAIN_TEXT));
         } else {
-            $cod_message = 'ia';
             $this->insert_UpdateGallery($attach_ids, $jersey_id);
-            //add attachs_ids for id_user
+
+            JPFlashMessage::FlashMessage(__('Images added', JERSEY_DOMAIN_TEXT));
         }
-
-
-        $urlSet = sprintf($url, $cod_message);
-
-        wp_redirect($urlSet);
-        exit();
     }
 
     public function processingPost()
     {
 
-        // TODO: CREAR UNA FUNCION PARA UNIFICAR EL ID DEL MENSAJE CON LA REDIRECCION
+        //This function is executed only if the user is authenticated
+
         if (!isset($_POST['jersey_id'])) {
-            echo 'mensaje de error';
-        } elseif ($this->current_user->ID == 0) {
-            echo 'usuario no autentificado';
+            JPFlashMessage::FlashMessage(__('Jersey not exist', JERSEY_DOMAIN_TEXT));
         }
-        /* TODO: Validar con nonce, para prevenir ataques. Si alguno de los 3 escenarios se da redireccionamos, salimos,no se procesa la peticion
-           y mostramos un mensaje.
+        /* TODO: Validar con nonce....
         */
         $this->gallerySingleJersey($_FILES, $_POST['jersey_id']);
     }

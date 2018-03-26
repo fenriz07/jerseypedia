@@ -8,7 +8,12 @@ $template_file = jersey_template_path();
 get_header();
 ?>
 
+
+
   		<?php
+
+        JPFlashMessage::init();
+
         echo  '<div class="wrapper">';
           load_template($template_file);
         echo '</div>';

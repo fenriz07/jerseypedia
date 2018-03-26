@@ -7,13 +7,14 @@ class JerseyCore
 {
     public function __construct()
     {
+        $this->initClass();
         $this->Model();
         $this->initLibs();
         $this->initPostType();
         $this->initCss();
         $this->initJs();
         $this->suportTheme();
-        
+
         $jerseyGallery = new jerseyGallery();
         $jerseyGallery->hearPost();
     }
@@ -23,6 +24,11 @@ class JerseyCore
     }
     private function initJs()
     {
+    }
+
+    private function initClass()
+    {
+        require_once JERSEY_DIR . "classes/jersey-flash-messages.php";
     }
 
     private function initLibs()

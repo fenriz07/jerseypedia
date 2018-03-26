@@ -10,23 +10,9 @@
 
 <?php
 
-        echo '<pre>';
-        var_dump($jerseygallery->getGalleryView($post->ID));
-        echo '</pre>';
-
-     // TODO: Funciones para mensajes Flash, hacer con cases, asignar al core...
-
-      if (isset($_GET['m'])) {
-          $id = $_GET['m'];
-
-          if ($id == 'ia') {
-              echo __('Imagenes Agregadas', JERSEY_DOMAIN_TEXT);
-          } elseif ($id == 'si') {
-              echo __('Error no ha subido imagenes', JERSEY_DOMAIN_TEXT);
-          } elseif ($id == 'ee') {
-              echo __('Error', JERSEY_DOMAIN_TEXT);
-          }
-      }
+      echo '<pre>';
+      var_dump($jerseygallery->getGalleryView($post->ID));
+      echo '</pre>';
 
 
 
