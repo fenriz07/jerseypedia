@@ -107,6 +107,7 @@ class jerseyGallery
 
     public function processingPost()
     {
+        echo "EPA";
 
         //This function is executed only if the user is authenticated
 

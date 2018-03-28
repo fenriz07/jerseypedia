@@ -4,7 +4,6 @@
 echo "<h1>epa</h1>";
 
 
-
 echo '<pre>';
 var_dump(JerseyModel::select()->recentContributions(3)->base()->addMeta()->get());
 echo '</pre>';

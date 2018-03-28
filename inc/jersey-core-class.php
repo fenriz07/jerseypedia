@@ -17,6 +17,9 @@ class JerseyCore
 
         $jerseyGallery = new jerseyGallery();
         $jerseyGallery->hearPost();
+
+        $jerseyRating = new JerseyRating();
+        $jerseyRating->hearPost();
     }
 
     private function initCss()
@@ -34,12 +37,14 @@ class JerseyCore
     private function initLibs()
     {
         require_once JERSEY_DIR . "inc/libs/theme-wrapper.php";
+        require      JERSEY_DIR . "inc/libs/meta-box/meta-box.php";
     }
 
     private function Model()
     {
         require_once JERSEY_DIR . "inc/model/jersey.php";
         require_once JERSEY_DIR . "inc/model/jersey-gallery.php";
+        require_once JERSEY_DIR . "inc/model/jersey-rating.php";
     }
 
     private function initPostType()
