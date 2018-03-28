@@ -15,6 +15,8 @@ class JerseyCore
         $this->initJs();
         $this->suportTheme();
 
+        JerseyRoutes::init();
+
         $jerseyGallery = new jerseyGallery();
         $jerseyGallery->hearPost();
 
@@ -32,6 +34,7 @@ class JerseyCore
     private function initClass()
     {
         require_once JERSEY_DIR . "classes/jersey-flash-messages.php";
+        require_once JERSEY_DIR . "classes/jersey-routes.php";
     }
 
     private function initLibs()
@@ -45,6 +48,7 @@ class JerseyCore
         require_once JERSEY_DIR . "inc/model/jersey.php";
         require_once JERSEY_DIR . "inc/model/jersey-gallery.php";
         require_once JERSEY_DIR . "inc/model/jersey-rating.php";
+        require_once JERSEY_DIR . "inc/model/jersey-user.php";
     }
 
     private function initPostType()

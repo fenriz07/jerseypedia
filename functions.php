@@ -25,33 +25,3 @@ function jersey_session_start()
         session_start();
     }
 }
-
-// TODO: Mover al core y refactorizar
-
-add_action('init', 'wpse26388_rewrites_init', 2);
-function wpse26388_rewrites_init()
-{
-    add_rewrite_rule(
-        'properties',
-        'index.php?pagename=properties',
-        'top'
-    );
-}
-
-
-
-add_filter('template_include', function ($template) {
-
-    // No es necesario ningún valor especifico del "gallery" query var,
-    // tan sólo que esté presente y que la plantilla single-event-gallery.php existe
-
-    // locate_template() devuelve el path de la plantilla, si existe, un string vacío si no
-    // locate_template() es compatible con temas hijos
-    $pagename = get_query_var('pagename');
-    $gallery_template = locate_template('page-properties.php');
-    if ($pagename == 'properties') {
-        return $gallery_template;
-    }
-
-    return $template;
-});

@@ -33,13 +33,9 @@ class JPFlashMessage
         echo "<h1>{$message}</h1>";
     }
 
-    public function FlashMessage($message)
+    public function FlashMessage($message, $url=null)
     {
-        // if (self::$_instance === null) {
-        //     self::$_instance = new self;
-        // }
-
-        $url = $_SERVER['HTTP_REFERER'];
+        $url = (is_null($url)) ? $_SERVER['HTTP_REFERER'] : $url;
 
         $_SESSION[self::$key] = $message;
 
