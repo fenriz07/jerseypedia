@@ -24,13 +24,13 @@ function jerseyCustomPost()
         'label'               => __('Jersey', JERSEY_DOMAIN_TEXT),
         'description'         => __('Jersey', JERSEY_DOMAIN_TEXT),
         'labels'              => $labels,
-        'supports'            => array( 'title', 'editor', 'thumbnail',),
+        'supports'            => array( 'title', 'editor', 'thumbnail','author'),
         'hierarchical'        => false,
         'public'              => true,
         'show_ui'             => true,
         'show_in_menu'        => true,
-        'show_in_nav_menus'   => true,
-        'show_in_admin_bar'   => true,
+        'show_in_nav_menus'   => false,
+        'show_in_admin_bar'   => false,
         'menu_position'       => 8,
         'menu_icon'           => 'dashicons-hammer',
         'can_export'          => true,
@@ -40,7 +40,6 @@ function jerseyCustomPost()
         ),
         'exclude_from_search' => true,
         'publicly_queryable'  => true,
-        'capability_type'     => 'post',
     );
     register_post_type('jersey', $args);
 }
@@ -119,3 +118,46 @@ function jerseyPostMetaBox($meta_boxes)
     return $meta_boxes;
 }
 add_filter('rwmb_meta_boxes', 'jerseyPostMetaBox');
+
+
+// function jersey_add_role()
+// {
+//     add_role(
+//      'jerseyuser',
+//             'Jersey User',
+//             array(
+//                 'read' => false,
+//                 'edit_posts' => false,
+//                 'delete_posts' => false,
+//                 'publish_posts' => false,
+//                 'upload_files' => false,
+//             )
+//         );
+// }
+// register_activation_hook(__FILE__, 'jersey_add_role');
+//
+// add_action('admin_init', 'jersey_add_role_caps', 999);
+// function jersey_add_role_caps()
+// {
+//
+// // Add the roles you'd like to administer the custom post types
+//     $roles = array('jerseyuser','administrator');
+//
+//     // Loop through each role and assign capabilities
+//
+//     foreach ($roles as $the_role) {
+//         $role = get_role($the_role);
+//
+//         $role->add_cap('read');
+//         $role->add_cap('read_jersey');
+//         $role->add_cap('read_private_jerseys');
+//         $role->add_cap('edit_jersey');
+//         $role->add_cap('edit_jerseys');
+//         $role->add_cap('edit_others_jerseys');
+//         $role->add_cap('edit_published_jerseys');
+//         $role->add_cap('publish_jerseys');
+//         $role->add_cap('delete_others_jerseys');
+//         $role->add_cap('delete_private_jerseys');
+//         $role->add_cap('delete_published_jerseys');
+//     }
+// }

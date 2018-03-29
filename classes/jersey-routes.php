@@ -5,6 +5,7 @@
 class JerseyRoutes
 {
     private static $_instance = null;
+    //TODO: Asignar la ruta para el logout
     private static $routes = [
       'log-in'             => [
                                 'file'       => 'templates/auth.php',

@@ -30,7 +30,13 @@ class JPFlashMessage
 
     private static function showMessage($message)
     {
-        echo "<h1>{$message}</h1>";
+        if (is_array($message)) {
+            echo '<pre>';
+            var_dump($message);
+            echo '</pre>';
+        } else {
+            echo "<h1>{$message}</h1>";
+        }
     }
 
     public function FlashMessage($message, $url=null)

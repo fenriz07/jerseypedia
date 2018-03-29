@@ -7,7 +7,7 @@ class JerseyUser
 {
     public function __construct()
     {
-        //$this->dataUser = $this->getUser();
+        $this->dataUser = $this->getUser();
     }
 
     private function getUser()
@@ -24,37 +24,73 @@ class JerseyUser
 
     public function hearPost()
     {
-        add_action('admin_post_nopriv_jersey_new_user', array( $this, 'processingPost' ));
+        add_action('admin_post_nopriv_jersey_new_user', array( $this, 'processingPostRegister' ));
     }
 
-    public function processingPost()
+    public function addNewUser($u)
     {
-        $min_character = 8;
+        $user_id = wp_create_user($u['email'], $u['pass'], $u['email']);
 
-        //TODO: Modificar Flashmensaje, para que cuando se le envie un arreglo, imprima todos los mensajes de error en lista
+
+        wp_update_user(['ID' => $user_id,'nickname' => $u['name']]);
+
+        $user = new WP_User($user_id);
+        $user->set_role('jerseyuser');
+
+        // TODO: Como no tengo servicio para el email se queda pegado.
+        //wp_mail($u['email'], 'Welcome!', 'Your Password: ' . $u['pass']);
+
+
+        JPFlashMessage::FlashMessage(__('User Register', JERSEY_DOMAIN_TEXT));
+    }
+
+    public function processingPostRegister()
+    {
+        check_admin_referer('jersey_new_user', 'jersey_new_user_form');
+
+        $min_character = 8;
+        $messages = [];
 
         $name                = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING, ['options'=>['flags' => FILTER_NULL_ON_FAILURE]]);
         $email               = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL, ['options'=>['flags' => FILTER_NULL_ON_FAILURE]]);
         $password            = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING, ['options'=>['flags' => FILTER_NULL_ON_FAILURE]]);
         $password_confirmed  = filter_input(INPUT_POST, 'password_confirmed', FILTER_SANITIZE_STRING, ['options'=>['flags' => FILTER_NULL_ON_FAILURE]]);
-        // if (is_null($name)) {
-        //     //Variable no definida
-        // }
-        // if ($email == false) {
-        //     //Email no valido
-        // } elseif (is_null($email)) {
-        //     //Email no existe
-        // }
-        // if (is_null($password)) {
-        //     //Variable no definida
-        // }
-        // if (is_null($password_confirmed) {
-        //     //Variable no definida
-        // }
 
-        // strlen($name) count
+        if (is_null($name)) {
+            $messages[] = __('Fullname not defined', JERSEY_DOMAIN_TEXT);
+        } elseif (strlen($name) < $min_character) {
+            $messages[] = __('Fullname must be greater than 8 characters', JERSEY_DOMAIN_TEXT);
+        }
 
-        var_dump($name);
+        if ($email == false) {
+            $messages[] = __('Mail  Invalid', JERSEY_DOMAIN_TEXT);
+        } elseif (is_null($email)) {
+            $messages[] = __('Mail not defined', JERSEY_DOMAIN_TEXT);
+        }
+
+        if (email_exists($email)) {
+            $messages[] = __("The email {$email} is in use", JERSEY_DOMAIN_TEXT);
+        }
+
+        if (is_null($password)) {
+            $messages[] = __('Password not defined', JERSEY_DOMAIN_TEXT);
+        } elseif (strlen($password) < $min_character) {
+            $messages[] = __('Password must be greater than 8 characters', JERSEY_DOMAIN_TEXT);
+        }
+
+        if (is_null($password_confirmed)) {
+            $messages[] = __('Password confirmed not defined', JERSEY_DOMAIN_TEXT);
+        }
+
+        if ($password != $password_confirmed) {
+            $messages[] = __('Passwords do not match', JERSEY_DOMAIN_TEXT);
+        }
+
+        if (count($messages) > 0) {
+            JPFlashMessage::FlashMessage($messages);
+        }
+
+        $this->addNewUser(['name' => $name, 'email' => $email, 'pass' => $password]);
     }
 }
 

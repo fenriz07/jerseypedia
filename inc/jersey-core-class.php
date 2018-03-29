@@ -69,5 +69,19 @@ class JerseyCore
         register_nav_menus(array(
          'primary' => esc_html__('Primary Menu', 'eduma'),
        ));
+
+        function rolIsJersey()
+        {
+            if (is_admin() && !defined('DOING_AJAX') && (current_user_can('jerseyuser'))) {
+                wp_redirect(home_url() . '/profile');
+                exit;
+            }
+
+            if (current_user_can('jerseyuser')) {
+                // TODO: TEMPORALMENTE true, despues de realizar el metodo de logout, favor poner en false.
+                show_admin_bar(true);
+            }
+        }
+        add_action('init', 'rolIsJersey');
     }
 }
