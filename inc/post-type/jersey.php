@@ -120,21 +120,18 @@ function jerseyPostMetaBox($meta_boxes)
 add_filter('rwmb_meta_boxes', 'jerseyPostMetaBox');
 
 
-// function jersey_add_role()
-// {
-//     add_role(
-//      'jerseyuser',
-//             'Jersey User',
-//             array(
-//                 'read' => false,
-//                 'edit_posts' => false,
-//                 'delete_posts' => false,
-//                 'publish_posts' => false,
-//                 'upload_files' => false,
-//             )
-//         );
-// }
-// register_activation_hook(__FILE__, 'jersey_add_role');
+function jersey_add_role()
+{
+    $permits = [
+      'read' => false,
+      'edit_posts' => false,
+      'delete_posts' => false,
+      'publish_posts' => false,
+      'upload_files' => false,
+    ];
+    add_role('jerseyuser', 'Jersey User', $permits);
+}
+register_activation_hook(__FILE__, 'jersey_add_role');
 //
 // add_action('admin_init', 'jersey_add_role_caps', 999);
 // function jersey_add_role_caps()

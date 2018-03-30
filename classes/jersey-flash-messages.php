@@ -19,10 +19,10 @@ class JPFlashMessage
             self::$_instance = new self;
         }
 
-        if (isset($_SESSION[self::$key])) {
+        if (isset($_SESSION[self::$key]) and $_SESSION[self::$key] != null) {
             // TODO: Llamar al partial para rellenarlo...
             self::showMessage($_SESSION[self::$key]);
-            session_destroy();
+            $_SESSION[self::$key] = null;
         }
 
         return self::$_instance;
@@ -41,7 +41,7 @@ class JPFlashMessage
 
     public function FlashMessage($message, $url=null)
     {
-        $url = (is_null($url)) ? $_SERVER['HTTP_REFERER'] : $url;
+        $url = (is_null($url)) ? $_SERVER['HTTP_REFERER'] : get_site_url() . "/" .$url;
 
         $_SESSION[self::$key] = $message;
 

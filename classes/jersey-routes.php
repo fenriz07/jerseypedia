@@ -5,7 +5,6 @@
 class JerseyRoutes
 {
     private static $_instance = null;
-    //TODO: Asignar la ruta para el logout
     private static $routes = [
       'log-in'             => [
                                 'file'       => 'templates/auth.php',
@@ -21,6 +20,10 @@ class JerseyRoutes
       'add-jersey'         => [
                                 'file'       => 'templates/new-jersey.php',
                                 'permission' => 'login'
+                              ],
+      'logout-jersey'      => [
+                                'file'       => 'templates/auth.php',
+                                'permission' => 'logout'
                               ]
     ];
 
@@ -31,9 +34,15 @@ class JerseyRoutes
         }
     }
 
+    private function logout()
+    {
+        wp_logout();
+        JPFlashMessage::FlashMessage(__('See you soon.', JERSEY_DOMAIN_TEXT), 'log-in');
+    }
+
     private function login()
     {
-        $login_url = get_site_url() . '/log-in';
+        $login_url = 'log-in';
         if (!is_user_logged_in()) {
             JPFlashMessage::FlashMessage(__('You need to be authenticated to access here.', JERSEY_DOMAIN_TEXT), $login_url);
         }
@@ -41,7 +50,7 @@ class JerseyRoutes
 
     private function not_login()
     {
-        $profile_url = get_site_url() . '/profile';
+        $profile_url = 'profile';
         if (is_user_logged_in()) {
             JPFlashMessage::FlashMessage(__('You are already authenticated.', JERSEY_DOMAIN_TEXT), $profile_url);
         }

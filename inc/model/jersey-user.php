@@ -8,6 +8,9 @@ class JerseyUser
     public function __construct()
     {
         $this->dataUser = $this->getUser();
+
+        add_action('admin_post_nopriv_jersey_new_user', array( $this, 'processingPostRegister' ));
+        add_action('admin_post_nopriv_jersey_login', array( $this, 'processingPostLogin' ));
     }
 
     private function getUser()
@@ -25,6 +28,7 @@ class JerseyUser
     public function hearPost()
     {
         add_action('admin_post_nopriv_jersey_new_user', array( $this, 'processingPostRegister' ));
+        add_action('admin_post_nopriv_jersey_login', array( $this, 'processingPostLogin' ));
     }
 
     public function addNewUser($u)
@@ -42,6 +46,51 @@ class JerseyUser
 
 
         JPFlashMessage::FlashMessage(__('User Register', JERSEY_DOMAIN_TEXT));
+    }
+
+    public function processingPostLogin()
+    {
+        check_admin_referer('jersey_login', 'jersey_login_form');
+
+        $email    = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL, ['options'=>['flags' => FILTER_NULL_ON_FAILURE]]);
+        $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING, ['options'=>['flags' => FILTER_NULL_ON_FAILURE]]);
+
+        if ($email == false) {
+            $messages[] = __('Mail  Invalid', JERSEY_DOMAIN_TEXT);
+        } elseif (is_null($email)) {
+            $messages[] = __('Mail not defined', JERSEY_DOMAIN_TEXT);
+        }
+
+        if (is_null($password)) {
+            $messages[] = __('Password not defined', JERSEY_DOMAIN_TEXT);
+        }
+
+        if (!email_exists($email)) {
+            $messages[] = __("Email not exists", JERSEY_DOMAIN_TEXT);
+        }
+
+        if (count($messages) > 0) {
+            JPFlashMessage::FlashMessage($messages);
+        }
+
+        $creds = array(
+             'user_login'    => $email,
+             'user_password' => $password,
+             'remember'      => true
+         );
+
+        $user = wp_signon($creds, false);
+
+        if (is_wp_error($user)) {
+            $code_error = $user->get_error_code();
+            if ($code_error = 'incorrect_password') {
+                JPFlashMessage::FlashMessage('Incorrect password', 'log-in');
+            } else {
+                JPFlashMessage::FlashMessage('Error', 'log-in');
+            }
+        } else {
+            JPFlashMessage::FlashMessage("Welcome to JerseyPedia", 'profile');
+        }
     }
 
     public function processingPostRegister()
@@ -93,6 +142,4 @@ class JerseyUser
         $this->addNewUser(['name' => $name, 'email' => $email, 'pass' => $password]);
     }
 }
-
-$userjersey = new JerseyUser();
-$userjersey->hearPost();
+new JerseyUser();

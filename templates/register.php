@@ -12,3 +12,5 @@
   <input type="hidden" name="action" value="jersey_new_user">
   <input type="submit" value="registeruser">
 </form>
+
+<?php echo do_shortcode('[alka_facebook]') ?>

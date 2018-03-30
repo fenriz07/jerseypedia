@@ -1,5 +1,8 @@
 <?php
 
+
+require JERSEY_DIR . "inc/post-type/jersey.php";
+
 /**
  *
  */
@@ -9,6 +12,7 @@ class JerseyModel
     private static $post_type = 'jersey';
     private static $args;
     public static $result;
+    private static $fieldsmb;
 
     private function __construct()
     {
@@ -142,6 +146,27 @@ class JerseyModel
         self::$result = $posts;
 
         return $this;
+    }
+
+    public function metabox()
+    {
+        $fieldsmb = jerseyPostMetaBox([]);
+        self::$fieldsmb = $fieldsmb[0]['fields'];
+
+        return $this;
+    }
+
+    public function field($namefield)
+    {
+        $searchfield = function ($namefield) {
+            $prexnf = PREFIX_META_BOX_JP . $namefield;
+            foreach (self::$fieldsmb as $key => $value) {
+                if ($value['id'] == $prexnf) {
+                    return $value;
+                }
+            }
+        };
+        return $searchfield($namefield);
     }
 
     public function get()

@@ -35,6 +35,7 @@ class JerseyCore
     {
         require_once JERSEY_DIR . "classes/jersey-flash-messages.php";
         require_once JERSEY_DIR . "classes/jersey-routes.php";
+        require_once JERSEY_DIR . "classes/jersey-fb.php";
     }
 
     private function initLibs()
