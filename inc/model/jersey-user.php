@@ -25,11 +25,11 @@ class JerseyUser
         return null;
     }
 
-    public function hearPost()
-    {
-        add_action('admin_post_nopriv_jersey_new_user', array( $this, 'processingPostRegister' ));
-        add_action('admin_post_nopriv_jersey_login', array( $this, 'processingPostLogin' ));
-    }
+    // public function hearPost()
+    // {
+    //     add_action('admin_post_nopriv_jersey_new_user', array( $this, 'processingPostRegister' ));
+    //     add_action('admin_post_nopriv_jersey_login', array( $this, 'processingPostLogin' ));
+    // }
 
     public function addNewUser($u)
     {

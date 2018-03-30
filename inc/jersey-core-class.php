@@ -36,6 +36,7 @@ class JerseyCore
         require_once JERSEY_DIR . "classes/jersey-flash-messages.php";
         require_once JERSEY_DIR . "classes/jersey-routes.php";
         require_once JERSEY_DIR . "classes/jersey-fb.php";
+        require_once JERSEY_DIR . '/inc/view/create-jersey.php';
     }
 
     private function initLibs()
@@ -73,7 +74,11 @@ class JerseyCore
 
         function rolIsJersey()
         {
-            if (is_admin() && !defined('DOING_AJAX') && (current_user_can('jerseyuser'))) {
+            // var_dump(is_admin());
+            // var_dump(!defined('DOING_AJAX'));
+            // var_dump(current_user_can('jerseyuser'));
+            // var_dump();
+            if (is_admin() && !defined('DOING_AJAX') && (current_user_can('jerseyuser')) && !isset($_POST['action'])) {
                 wp_redirect(home_url() . '/profile');
                 exit;
             }
