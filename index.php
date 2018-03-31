@@ -3,8 +3,12 @@
 
 echo "<h1>epa</h1>";
 
+// echo '<pre>';
+// var_dump(JerseyModel::select()->metabox()->field('league'));
+// echo '</pre>';
+
 echo '<pre>';
-var_dump(JerseyModel::select()->metabox()->field('league'));
+var_dump(JerseyModel::select()->jerseyUser()->base()->addMeta()->get());
 echo '</pre>';
 
 

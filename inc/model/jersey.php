@@ -27,6 +27,17 @@ class JerseyModel
         return self::$_instance;
     }
 
+    public function jerseyUser()
+    {
+        $user = wp_get_current_user();
+        self::$args = [
+          'author'        => $user->ID,
+          'post_status'   => 'any',
+          'post_per_page' => -1 ,
+        ];
+        return $this;
+    }
+
     public static function set()
     {
         if (self::$_instance === null) {
@@ -113,8 +124,9 @@ class JerseyModel
             while ($query->have_posts()) : $query->the_post();
             array_push($posts, [
                   'id'      => get_the_ID(),
-                  'uri'     => get_permalink(),
+                  'uri'     => post_permalink(get_the_ID()),
                   'title'   => get_the_title(),
+
                 ]);
             endwhile;
         } else {
@@ -129,15 +141,26 @@ class JerseyModel
         return $this;
     }
 
-    public function addMeta($options = ['kit','type_kit','league','make','sponsors','colours','fabric'])
+    public function addMeta($options_p = ['league','make','sponsors','colours','fabric'])
     {
+        $default = ['kit','type_kit','since','until','rating'];
+        $options = array_merge($default, $options_p);
         $posts = self::$result;
 
         foreach ($posts as $key => $post) {
             $meta = [];
 
             foreach ($options as $number=> $value) {
-                $meta += [PREFIX_META_BOX_JP . $value => rwmb_meta(PREFIX_META_BOX_JP . $value, '', $post['id'])];
+                if ($value != 'rating' && $value != 'kit' && $value != 'type_kit') {
+                    $meta += [PREFIX_META_BOX_JP . $value => rwmb_meta(PREFIX_META_BOX_JP . $value, '', $post['id'])];
+                } elseif ($value == 'kit' || $value == 'type_kit') {
+                    $id     = rwmb_meta(PREFIX_META_BOX_JP . $value, '', $post['id']);
+                    $select = $this->metabox()->field($value);
+                    $meta  += [PREFIX_META_BOX_JP . $value =>  $select['options'][$id] ];
+                } else {
+                    $jerseyRating = new JerseyRating();
+                    $meta += [PREFIX_META_BOX_JP . $value => $jerseyRating->getRating($post['id'])];
+                }
             }
 
             $posts[$key]['meta'] = $meta;
