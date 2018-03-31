@@ -75,7 +75,7 @@ class jerseyGallery
         update_post_meta($jersey_id, $this->key, $gallery);
     }
 
-    private function gallerySingleJersey($images_gallery, $jersey_id)
+    public function gallerySingleJersey($images_gallery, $jersey_id, $message_c = null)
     {
         $files       = $images_gallery["my_image_upload"];
         $attach_ids  = [];
@@ -96,12 +96,13 @@ class jerseyGallery
             JPFlashMessage::FlashMessage(__('Error has not uploaded images', JERSEY_DOMAIN_TEXT));
         }
 
-        if (is_wp_error($attachment_id)) {
+        if (is_wp_error($attach_id)) {
             JPFlashMessage::FlashMessage(__('Error', JERSEY_DOMAIN_TEXT));
         } else {
             $this->insert_UpdateGallery($attach_ids, $jersey_id);
-
-            JPFlashMessage::FlashMessage(__('Images added', JERSEY_DOMAIN_TEXT));
+            if ($message_c == null) {
+                JPFlashMessage::FlashMessage(__('Images added', JERSEY_DOMAIN_TEXT));
+            }
         }
     }
 

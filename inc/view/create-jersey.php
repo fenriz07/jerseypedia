@@ -9,6 +9,18 @@ class CreateJersey
 {
     public function __construct()
     {
+        $this->inputs = [
+          'kit',
+          'type_kit',
+          'league',
+          'make',
+          'sponsors',
+          'fabric',
+          'colours',
+          'since',
+          'until'
+        ];
+
         add_action('admin_post_create_jersey', [$this, 'processingPost']);
         add_action('wp_ajax_get_team', [$this, 'getTeam']);
     }
@@ -43,6 +55,12 @@ class CreateJersey
         echo sprintf($text_base, $field['name']);
     }
 
+    private function number($field)
+    {
+        $text_base = '<input type="number" name="%s" placeholder="%s">';
+        echo sprintf($text_base, $field['name'], $field['placeholder']);
+    }
+
     private function printInput($namefield)
     {
         $field = JerseyModel::select()->metabox()->field($namefield);
@@ -51,13 +69,9 @@ class CreateJersey
 
     public function render()
     {
-        $this->printInput('kit');
-        $this->printInput('type_kit');
-        $this->printInput('league');
-        $this->printInput('make');
-        $this->printInput('sponsors');
-        $this->printInput('colours');
-        $this->printInput('fabric');
+        foreach ($this->inputs as $key => $input) {
+            $this->printInput($input);
+        }
         wp_nonce_field('create_jersey', 'create_jersey_form');
         $this->action();
     }
@@ -69,15 +83,27 @@ class CreateJersey
                       [
                         'name'     => 'kit',
                         'emessage' => __('Select a valid kit', JERSEY_DOMAIN_TEXT),
+                        'with_option' => true,
                       ],
                       [
                         'name'     => 'type_kit',
                         'emessage' => __('Select a valid type kit', JERSEY_DOMAIN_TEXT),
+                        'with_option' => true,
                       ],
                       // [
                       //   'name'     => 'team',
                       //   'emessage' => __('Select a valid team', JERSEY_DOMAIN_TEXT),
                       // ],
+                      [
+                        'name'        => 'since',
+                        'emessage'    => __('Select a valid since year', JERSEY_DOMAIN_TEXT),
+                        'with_option' => false,
+                      ],
+                      [
+                        'name'     => 'until',
+                        'emessage' => __('Select a valid until year', JERSEY_DOMAIN_TEXT),
+                        'with_option' => false,
+                      ],
                     ];
         $text = [
                     [
@@ -103,11 +129,12 @@ class CreateJersey
                 ];
 
         foreach ($int as $key => $input) {
-            if ($input['name'] != 'team') {
+            if ($input['with_option']) {
                 $select =  filter_input(INPUT_POST, $input['name'], FILTER_VALIDATE_INT, ["options"=>["min_range"=>1, "max_range"=>4]]);
             } else {
                 $select =  filter_input(INPUT_POST, $input['name'], FILTER_VALIDATE_INT);
             }
+
 
             if ($select  == false) {
                 $failures[] = $input['emessage'];
@@ -125,19 +152,63 @@ class CreateJersey
             JPFlashMessage::FlashMessage($failures);
         }
 
-        $this->createPost($_POST);
+        $this->createPost($_POST, $_FILES);
     }
 
-    private function createPost($data)
+    private function createPost($data, $files)
     {
+        /*
+        * El proceso es el siguente:
+        * Creamos la jersey y verificamos que no halla errores
+        * Asignamos los metadatos
+        * Asignamos las imagenes
+        * El titulo es la combinancion del TEAM + YEAR ORIGEN + YEAR FINISH
+        */
+
+        /*
+          Supongamos que por data me traigo el RealMadrid cuyo id = 5
+        */
+
+        $id_team = 5;
+
+        $team = get_term($id_team, 'team');
+
+        $title_jersey = "{$team->name} | {$data['since']} - {$data['until']}";
+
+        echo $team->name;
+
         $jersey = [
-          'post_title'   => 'Probando',
-          'post_content' => '<h1>Hello</h1>',
-          'post_type'    => 'jersey',
-          'post_status'  => 'pending',
+          'post_title'    => $title_jersey,
+          'post_name'     => $team->name,
+          'post_content'  => '<h1>Hello</h1>',
+          'post_type'     => 'jersey',
+          'post_status'   => 'pending',
         ];
 
-        wp_insert_post($jersey);
+        //var_dump($this->inputs);
+
+        $jersey_id = wp_insert_post($jersey);
+
+        if (is_wp_error($jersey_id)) {
+            JPFlashMessage::FlashMessage($jersey_id->get_error_message());
+        }
+
+        foreach ($this->inputs as $key => $input) {
+            $key_mb = PREFIX_META_BOX_JP . $input;
+            add_post_meta($jersey_id, $key_mb, $data[$input]);
+        }
+
+        $add_term = wp_set_post_terms($jersey_id, $id_team, 'team');
+
+        if (is_wp_error($add_term)) {
+            JPFlashMessage::FlashMessage($add_term->get_error_message());
+        }
+
+        // TODO: Subir imagenes
+
+        $jerseygallery = new jerseyGallery();
+        $jerseygallery->gallerySingleJersey($files, $jersey_id, 2);
+
 
         //TODO: NOTIFICAR CON UN EMAIL AL ADMIN.
     }

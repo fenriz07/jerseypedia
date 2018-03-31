@@ -12,7 +12,7 @@ require_once JERSEY_DIR . 'inc/jersey-core-class.php';
 if (! function_exists('jersey_setup')) {
     function jersey_setup()
     {
-        $runJersey = new JerseyCore();
+        new JerseyCore();
     }
 } // jersey_setup
 add_action('after_setup_theme', 'jersey_setup');

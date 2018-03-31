@@ -144,6 +144,18 @@ function jerseyPostMetaBox($meta_boxes)
                 'name' => esc_html__('views', JERSEY_DOMAIN_TEXT),
                 'std'  => 0,
             ),
+            array(
+              'id' => PREFIX_META_BOX_JP . 'since',
+              'type' => 'number',
+              'name' => esc_html__('since', JERSEY_DOMAIN_TEXT),
+              'placeholder' => esc_html__('Since Year', JERSEY_DOMAIN_TEXT),
+            ),
+            array(
+              'id' => PREFIX_META_BOX_JP . 'until',
+              'type' => 'number',
+              'name' => esc_html__('until', JERSEY_DOMAIN_TEXT),
+              'placeholder' => esc_html__('Until Year', JERSEY_DOMAIN_TEXT),
+            ),
         ),
     );
 

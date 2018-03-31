@@ -6,7 +6,8 @@
 <?php
 
 ?>
-<form method="post"  action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+<form method="post"  action="<?php echo esc_url(admin_url('admin-post.php')); ?>" enctype="multipart/form-data">
+<input type="file" name="my_image_upload[]" id="my_image_upload[]"  multiple="true" />
 <?php
 $form = new CreateJersey();
 $form->render();
