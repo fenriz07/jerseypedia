@@ -37,6 +37,7 @@ class JerseyCore
         require_once JERSEY_DIR . "classes/jersey-routes.php";
         require_once JERSEY_DIR . "classes/jersey-fb.php";
         require_once JERSEY_DIR . '/inc/view/create-jersey.php';
+        require_once JERSEY_DIR . '/inc/view/search-jerseys.php';
     }
 
     private function initLibs()

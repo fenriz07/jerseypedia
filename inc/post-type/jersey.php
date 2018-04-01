@@ -163,6 +163,92 @@ function jerseyPostMetaBox($meta_boxes)
 }
 add_filter('rwmb_meta_boxes', 'jerseyPostMetaBox');
 
+function script_img_upload()
+{
+    wp_enqueue_media(); ?>
+	<script>
+			jQuery(document).ready(function($){
+				var custom_uploader;
+				$('#upload_img').click(function(e) {
+						e.preventDefault();
+
+						//Extend the wp.media object
+						custom_uploader = wp.media.frames.file_frame = wp.media({
+								title: 'Upload Image ',
+								button: {
+										text: 'Upload Image'
+								},
+								multiple: false
+						});
+						//When a file is selected, grab the URL and set it as the text field's value
+						custom_uploader.on('select', function() {
+								console.log(custom_uploader.state().get('selection').toJSON());
+								attachment = custom_uploader.state().get('selection').first().toJSON();
+								$('#text_imagen').val(attachment.url);
+						});
+						//Open the uploader dialog
+						custom_uploader.open();
+					});
+
+			});
+	</script>
+	<?php
+}
+
+function imagen_taxonomy_add_new_meta_field()
+{
+    // this will add the custom meta field to the add new term page?>
+	<div class="form-field">
+		<label for="term_meta[team-image-meta]"><?php _e('Url for image', JERSEY_DOMAIN_TEXT); ?></label>
+		<input type="text" name="term_meta[team-image-meta]" id="text_imagen" value="">
+		<input id="upload_img" class="button" type="button" value="Add Image"/>
+	</div>
+<?php
+ script_img_upload();
+}
+
+add_action('team_add_form_fields', 'imagen_taxonomy_add_new_meta_field', 10, 2);
+
+function imagen_taxonomy_edit_meta_field($term)
+{
+
+    // put the term ID into a variable
+    $t_id = $term->term_id;
+
+    // retrieve the existing value(s) for this meta field. This returns an array
+    $term_meta  = get_option("taxonomy_$t_id");
+    $url_imagen = esc_attr($term_meta['team-image-meta']) ? esc_attr($term_meta['team-image-meta']) : ''; ?>
+  	<tr class="form-field">
+  	<th scope="row" valign="top"><label for="term_meta[team-image-meta]"><?php _e('Image for League or Team', JERSEY_DOMAIN_TEXT); ?></label></th>
+  		<td>
+  			<input type="text" name="term_meta[team-image-meta]" id="text_imagen" value="<?php echo $url_imagen ?>">
+        <img height="64px" width="64px" src="<?php echo $url_imagen?>">
+  			<input id="upload_img" class="button" type="button" value="Add Imagen" />
+  		</td>
+  	</tr>
+<?php
+ script_img_upload();
+}
+add_action('team_edit_form_fields', 'imagen_taxonomy_edit_meta_field', 10, 2);
+
+
+function save_taxonomy_custom_meta($term_id)
+{
+    if (isset($_POST['term_meta'])) {
+        $t_id = $term_id;
+        $term_meta = get_option("taxonomy_$t_id");
+        $cat_keys = array_keys($_POST['term_meta']);
+        foreach ($cat_keys as $key) {
+            if (isset($_POST['term_meta'][$key])) {
+                $term_meta[$key] = $_POST['term_meta'][$key];
+            }
+        }
+        // Save the option array.
+        update_option("taxonomy_$t_id", $term_meta);
+    }
+}
+add_action('edited_team', 'save_taxonomy_custom_meta', 10, 2);
+add_action('create_team', 'save_taxonomy_custom_meta', 10, 2);
 
 function jersey_add_role()
 {

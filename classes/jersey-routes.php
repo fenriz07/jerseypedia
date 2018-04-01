@@ -24,7 +24,10 @@ class JerseyRoutes
       'logout-jersey'      => [
                                 'file'       => 'templates/auth.php',
                                 'permission' => 'logout'
-                              ]
+                              ],
+      'advanced-search'     => [
+                                'file'       => 'templates/advanced-search.php',
+                              ],
     ];
 
     public function setRoutes()
@@ -33,6 +36,8 @@ class JerseyRoutes
             add_rewrite_rule($key, "index.php?pagename={$key}", 'top');
         }
     }
+
+
 
     private function logout()
     {

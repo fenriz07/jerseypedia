@@ -18,6 +18,29 @@ class JerseyModel
     {
     }
 
+    public function team($jersey_id = null)
+    {
+        if ($jersey_id != null) {
+            $terms = wp_get_post_terms($jersey_id, 'team', ["fields" => "all"]);
+
+            if (count($terms) == 0) {
+                return [];
+            }
+
+            $team       = $terms[0];
+            $term_meta  = get_option("taxonomy_$team->term_id");
+            $image      = esc_attr($term_meta['team-image-meta']);
+
+            return [
+                      'id'    =>  $team->term_id,
+                      'name'  =>  $team->name,
+                      'image' =>  $image,
+                   ];
+        }
+
+        return [];
+    }
+
     public static function select()
     {
         if (self::$_instance === null) {
@@ -126,12 +149,12 @@ class JerseyModel
                   'id'      => get_the_ID(),
                   'uri'     => post_permalink(get_the_ID()),
                   'title'   => get_the_title(),
-
+                  'team'    => $this->team(get_the_ID())
                 ]);
             endwhile;
         } else {
-            self::$result = false;
-            return false;
+            self::$result = [];
+            return $this;
         }
 
         // Reset Post Data
@@ -195,5 +218,32 @@ class JerseyModel
     public function get()
     {
         return self::$result;
+    }
+
+    public function advancedSearch($data = [])
+    {
+        if (count($data) == 0) {
+            $default = [
+                        'order'           => 'DESC',
+                        'orderby'         => 'ID',
+                        'post_status'     => 'publish',
+                        'posts_per_page'  => 5,
+                        'page'            => 1,
+                       ];
+        } else {
+            $default = [
+                        'order'           => 'DESC',
+                        'orderby'         => 'ID',
+                        'post_status'     => 'publish',
+                        'posts_per_page'  => -1,
+                       ];
+
+            $default = array_merge($data, $default);
+        }
+
+
+
+        self::$args = $default;
+        return $this;
     }
 }
