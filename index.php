@@ -41,5 +41,20 @@ echo "<h1>epa</h1>";
 <form id="featured_upload" method="post" action="<?php echo get_site_url() . '/advanced-search'   ?>" enctype="multipart/form-data">
 	<input type="text" name="title-jersey"/>
   <?php wp_nonce_field('jersey-search', 'advanced-search'); ?>
+	<input type="checkbox" name="advanced_search" value="true">Advanced search
+
+	<input type="radio" name="kit" value="1">Home kit
+	<input type="radio" name="kit" value="2">Away kit
+	<input type="radio" name="kit" value="3">Third kit
+	<input type="radio" name="kit" value="4">Other
+
+	<select class="" name="season">
+		<option value="0">Ninguno</option>
+		<option value="1990">1990</option>
+		<option value="2000">2000</option>
+		<option value="2010">2010</option>
+		<option value="2015">2015</option>
+	</select>
+
 	<input id="submit_my_image_upload" name="submit_my_image_upload" type="submit" value="Upload" />
 </form>

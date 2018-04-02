@@ -65,9 +65,11 @@ class jerseyGallery
 
 
         if (array_key_exists($key, $gallery)) {
-            $gallery[$key] = array_merge($gallery[$key], $list_images) ;
+            $gallery[$key] = array_merge($gallery[$key], $list_images);
         } else {
             $gallery[$key] = $list_images;
+            set_post_thumbnail($jersey_id, $list_images[0]);
+            //Si es nuevo creamos la imagen destacada.
         }
 
         $gallery = serialize($gallery);

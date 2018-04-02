@@ -158,14 +158,6 @@ class CreateJersey
     private function createPost($data, $files)
     {
         /*
-        * El proceso es el siguente:
-        * Creamos la jersey y verificamos que no halla errores
-        * Asignamos los metadatos
-        * Asignamos las imagenes
-        * El titulo es la combinancion del TEAM + YEAR ORIGEN + YEAR FINISH
-        */
-
-        /*
           Supongamos que por data me traigo el RealMadrid cuyo id = 5
         */
 

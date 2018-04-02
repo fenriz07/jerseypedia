@@ -149,6 +149,7 @@ class JerseyModel
                   'id'      => get_the_ID(),
                   'uri'     => post_permalink(get_the_ID()),
                   'title'   => get_the_title(),
+                  'image'   => get_the_post_thumbnail_url(get_the_ID(), 'medium'),
                   'team'    => $this->team(get_the_ID())
                 ]);
             endwhile;
