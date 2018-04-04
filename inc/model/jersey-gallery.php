@@ -4,8 +4,6 @@ require_once(ABSPATH . 'wp-admin/includes/image.php');
 require_once(ABSPATH . 'wp-admin/includes/file.php');
 require_once(ABSPATH . 'wp-admin/includes/media.php');
 
-
-
 /**
  *
  */
@@ -83,8 +81,30 @@ class jerseyGallery
         $attach_ids  = [];
         $cod_message = '';
 
+        $filter_type = function ($files) {
+            $return_files = [
+              'name' => [],
+              'type' => [],
+              'tmp_name' => [],
+              'error'  => [],
+              'size' => []
+            ];
+
+            foreach ($files['name'] as $key => $name) {
+                $type = wp_check_filetype($name)['ext'];
+                if ($type == 'jpg' || $type == 'png' || $type == 'jpeg') {
+                    $return_files['name'][$key]     = $files['name'][$key];
+                    $return_files['type'][$key]     = $files['type'][$key];
+                    $return_files['tmp_name'][$key] = $files['tmp_name'][$key];
+                    $return_files['error'][$key]    = $files['error'][$key];
+                    $return_files['size'][$key]     = $files['size'][$key];
+                }
+            }
+            return $return_files;
+        };
 
         if ($files['size'][0] != 0) {
+            $files = $filter_type($files);
             foreach ($files['name'] as $key => $value) {
                 if ($files['name'][$key]) {
                     $_FILES = $this->prepareImage($files, $key);

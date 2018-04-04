@@ -1,5 +1,9 @@
 <?php
 
+require_once(ABSPATH . 'wp-admin/includes/image.php');
+require_once(ABSPATH . 'wp-admin/includes/file.php');
+require_once(ABSPATH . 'wp-admin/includes/media.php');
+
 /**
  *
  */
@@ -8,6 +12,14 @@ class JerseyUser
     public function __construct()
     {
         $this->dataUser = $this->getUser();
+
+        $this->metaData = [
+          'nickname'    => ['value' =>'','filter'=>FILTER_SANITIZE_STRING],
+          'description' => ['value' =>'','filter'=>FILTER_SANITIZE_STRING],
+          'ig_jersey'   => ['value' =>'','filter'=>FILTER_SANITIZE_URL],
+          'fb_jersey'   => ['value' =>'','filter'=>FILTER_SANITIZE_URL],
+          'tw_jersey'   => ['value' =>'','filter'=>FILTER_SANITIZE_URL],
+        ];
 
         add_action('admin_post_nopriv_jersey_new_user', array( $this, 'processingPostRegister' ));
         add_action('admin_post_nopriv_jersey_login', array( $this, 'processingPostLogin' ));
@@ -25,11 +37,47 @@ class JerseyUser
         return null;
     }
 
-    // public function hearPost()
-    // {
-    //     add_action('admin_post_nopriv_jersey_new_user', array( $this, 'processingPostRegister' ));
-    //     add_action('admin_post_nopriv_jersey_login', array( $this, 'processingPostLogin' ));
-    // }
+    public function getData()
+    {
+        $current_user = wp_get_current_user();
+        $user_info = get_userdata($current_user->ID);
+
+        $this->metaData['profile_img'] = '';
+        foreach ($this->metaData as $key => $value) {
+            $this->metaData[$key] = $user_info->{$key};
+        }
+
+
+        return $this->metaData;
+    }
+
+    public function setData()
+    {
+        $current_user = wp_get_current_user();
+
+        foreach ($this->metaData as $key => $data) {
+            $filter = filter_input(INPUT_POST, $key, strip_tags($data['filter']), ['options'=>['flags' => FILTER_NULL_ON_FAILURE]]);
+            if (!is_null($filter) && $filter != false) {
+                if (!empty(trim($filter))) {
+                    update_user_meta($current_user->ID, $key, $filter);
+                }
+            }
+        }
+
+
+        if (isset($_FILES["profile_img"])) {
+            $file  = $_FILES["profile_img"];
+
+            $type  = wp_check_filetype($file['name'])["ext"];
+
+            if ($type == 'jpg' || $type == 'png' || $type == 'jpeg') {
+                if ($file['size'] != 0) {
+                    $attach_id = media_handle_upload('profile_img', -1);
+                    update_user_meta($current_user->ID, 'profile_img', $attach_id);
+                }
+            }
+        }
+    }
 
     public function addNewUser($u)
     {

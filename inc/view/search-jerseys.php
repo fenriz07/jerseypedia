@@ -86,7 +86,7 @@ class JerseySearch
             if (empty(trim($title_jersey))) {
                 return $args;
             }
-            $args['s'] = $title_jersey;
+            $args['s'] = strip_tags($title_jersey);
         }
         return $args ;
     }
